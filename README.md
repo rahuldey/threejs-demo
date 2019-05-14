@@ -3,5 +3,5 @@ Learner threejs project
 
 ### Setup Instructions
 - npm install
-- npm build
-- npm start:dev
+- npm run build
+- npm run start:dev
