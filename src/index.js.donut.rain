@@ -1,27 +1,25 @@
 import * as THREE from "three";
 
-let scene, camera, renderer, torus1, torus2, torus3;
+const torusArray = [];
 let ADD = 0.05;
 
-const createTorus = (x, y, color) => {
-  let geometry = new THREE.TorusGeometry(x, y, 2, 50, 2 * Math.PI);
-  let material = new THREE.MeshBasicMaterial({
-    color: color
-  });
-  let torus = new THREE.Mesh(geometry, material);
-  torus.rotation.x += 1;
-  torus.rotation.y += 0.5;
-  return torus;
+const randomInRange = (from, to) => {
+  let x = Math.random() * (to - from);
+  return from + x;
 };
 
-const addTorus = () => {
-  torus1 = createTorus(1, 0.225, 0xe9d687);
-  torus2 = createTorus(1.5, 0.225, 0xebc93e);
-  torus3 = createTorus(2, 0.225, 0xe9d687);
-
-  scene.add(torus1);
-  scene.add(torus2);
-  scene.add(torus3);
+const createTorusRain = () => {
+  let geometry = new THREE.TorusGeometry(0.25, 0.125, 30, 50, 2 * Math.PI);
+  let material = new THREE.MeshBasicMaterial({
+    color: Math.random() * 0xffffff,
+    wireframe: true
+  });
+  let torus = new THREE.Mesh(geometry, material);
+  torus.position.x = randomInRange(-3, 3);
+  torus.position.z = randomInRange(-4.5, 4.5);
+  torus.position.y = 1.5;
+  scene.add(torus);
+  torusArray.push(torus);
 };
 
 const init = () => {
@@ -45,12 +43,16 @@ const init = () => {
   renderer = new THREE.WebGLRenderer();
   renderer.setSize(window.innerWidth, window.innerHeight);
 
-  addTorus();
-
   document.body.appendChild(renderer.domElement);
 };
 
 const mainloop = () => {
+  if (Math.random() < 0.2) createTorusRain();
+
+  torusArray.forEach(item => {
+    item.position.y -= ADD;
+  });
+
   renderer.render(scene, camera);
   requestAnimationFrame(mainloop);
 };
