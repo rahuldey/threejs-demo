@@ -5,7 +5,7 @@ let torus = [];
 let ADD = 0.01;
 
 const createTorus = (x, y, color) => {
-  let geometry = new THREE.TorusGeometry(x, y, 2, 50, 2 * Math.PI);
+  let geometry = new THREE.TorusGeometry(x, y, 20, 50, 2 * Math.PI);
   let material = new THREE.MeshBasicMaterial({
     color: color
   });
@@ -58,7 +58,7 @@ const init = () => {
   renderer.setSize(window.innerWidth, window.innerHeight);
 
   // populate the scene
-  //createAxes();
+  // createAxes();
   addRings();
   addPlanet();
 
