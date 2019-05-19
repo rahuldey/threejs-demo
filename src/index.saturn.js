@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import * as THREE from "three";
 
 let scene, camera, renderer, sphere, axes;
 let torus = [];
@@ -73,6 +73,10 @@ const mainloop = () => {
   renderer.render(scene, camera);
   requestAnimationFrame(mainloop);
 };
+
+window.addEventListener("resize", () => {
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
 
 init();
 mainloop();

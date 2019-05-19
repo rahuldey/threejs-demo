@@ -1,25 +1,18 @@
 import * as THREE from "three";
 
 let scene, camera, renderer;
-let cube, sphere;
-let ADD = 0.1;
+let cube, normals;
+let ADD = 0.05;
 
 const createGeometry = () => {
-  let material = new THREE.MeshDepthMaterial();
+  let geometry = new THREE.BoxGeometry(5, 5, 5);
+  let material = new THREE.MeshNormalMaterial();
 
-  let geometry = new THREE.BoxGeometry(3, 3, 3);
   cube = new THREE.Mesh(geometry, material);
-
-  geometry = new THREE.SphereGeometry(2, 30, 30);
-  sphere = new THREE.Mesh(geometry, material);
-
-  cube.position.z = -5;
-  cube.position.x = 3;
-  sphere.position.z = 5;
-  sphere.position.x = -3;
+  normals = new THREE.FaceNormalsHelper(cube, 3);
 
   scene.add(cube);
-  scene.add(sphere);
+  scene.add(normals);
 };
 
 const init = () => {
@@ -34,7 +27,7 @@ const init = () => {
     1,
     1000
   );
-  camera.position.z = 10;
+  camera.position.z = 20;
 
   // create the renderer
   renderer = new THREE.WebGLRenderer();
@@ -46,10 +39,8 @@ const init = () => {
 };
 
 const mainloop = () => {
-  sphere.position.z -= ADD;
-  cube.position.z += ADD;
-
-  if (sphere.position.z > 5 || sphere.position.z < -5) ADD *= -1;
+  cube.rotation.x += ADD;
+  normals.update();
 
   renderer.render(scene, camera);
   requestAnimationFrame(mainloop);

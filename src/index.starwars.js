@@ -1,7 +1,7 @@
 import * as THREE from "three";
 
-const starWarsFontJSON = require("../assets/StarJedi.json");
-const starWarsHollowFontJSON = require("../assets/StarJediHollow.json");
+const starWarsFontJSON = require("../assets/fonts/StarJedi.json");
+const starWarsHollowFontJSON = require("../assets/fonts/StarJediHollow.json");
 
 let scene, camera, renderer;
 let headerText = [];
@@ -91,6 +91,10 @@ const mainloop = () => {
   renderer.render(scene, camera);
   requestAnimationFrame(mainloop);
 };
+
+window.addEventListener("resize", () => {
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
 
 init();
 mainloop();

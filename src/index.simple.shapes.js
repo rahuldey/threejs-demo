@@ -48,7 +48,6 @@ const init = () => {
 };
 
 const mainloop = () => {
-  
   sphere.rotation.y += ADD;
   sphere.rotation.x += ADD;
   sphere.position.x += ADD;
@@ -58,6 +57,10 @@ const mainloop = () => {
   renderer.render(scene, camera);
   requestAnimationFrame(mainloop);
 };
+
+window.addEventListener("resize", () => {
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
 
 init();
 mainloop();

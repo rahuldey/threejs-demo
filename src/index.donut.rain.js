@@ -57,5 +57,9 @@ const mainloop = () => {
   requestAnimationFrame(mainloop);
 };
 
+window.addEventListener("resize", () => {
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
 init();
 mainloop();
