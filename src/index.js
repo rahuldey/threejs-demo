@@ -1,58 +1,74 @@
 import * as THREE from "three";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
-let scene, camera, renderer;
+let scene, camera, renderer, controls, mixer, clock;
 let cube, sphere;
 let ADD = 0.1;
 
 const createGeometry = () => {
-  let material = new THREE.MeshDepthMaterial();
-
-  let geometry = new THREE.BoxGeometry(3, 3, 3);
-  cube = new THREE.Mesh(geometry, material);
-
-  geometry = new THREE.SphereGeometry(2, 30, 30);
-  sphere = new THREE.Mesh(geometry, material);
-
-  cube.position.z = -5;
-  cube.position.x = 3;
-  sphere.position.z = 5;
-  sphere.position.x = -3;
-
-  scene.add(cube);
-  scene.add(sphere);
+  var loader = new GLTFLoader();
+  loader.load(
+    "../assets/DS.glb",
+    function (gltf) {
+      mixer = new THREE.AnimationMixer(gltf.scene);
+      var action = mixer.clipAction(gltf.animations[0]);
+      action.play();
+      scene.add(gltf.scene);
+    },
+    // called while loading is progressing
+    function (xhr) {
+      console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
+    },
+    // called when loading has errors
+    function (error) {
+      console.log("An error happened!!!!!");
+    }
+  );
 };
 
 const init = () => {
   // create the scene
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0xffffff);
+  clock = new THREE.Clock();
 
-  // create and locate the camera
-  camera = new THREE.PerspectiveCamera(
-    75,
-    window.innerWidth / window.innerHeight,
-    1,
-    1000
-  );
-  camera.position.z = 10;
+  var ambientLight = new THREE.AmbientLight(0xffffff, 1);
+  scene.add(ambientLight);
 
   // create the renderer
+  camera = new THREE.PerspectiveCamera(
+    100,
+    window.innerWidth / window.innerHeight,
+    1,
+    10000
+  );
   renderer = new THREE.WebGLRenderer();
   renderer.setSize(window.innerWidth, window.innerHeight);
+  controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
+  controls.dampingFactor = 0.05;
+
+  controls.screenSpacePanning = false;
+
+  controls.minDistance = 100;
+  controls.maxDistance = 500;
+
+  controls.maxPolarAngle = Math.PI / 2;
+  controls.update();
 
   createGeometry();
 
   document.body.appendChild(renderer.domElement);
 };
 
-const mainloop = () => {
-  sphere.position.z -= ADD;
-  cube.position.z += ADD;
+const animate = () => {
+  requestAnimationFrame(animate);
+  var delta = clock.getDelta();
 
-  if (sphere.position.z > 5 || sphere.position.z < -5) ADD *= -1;
-
+  if (mixer) mixer.update(delta);
+  controls.update();
   renderer.render(scene, camera);
-  requestAnimationFrame(mainloop);
 };
 
 window.addEventListener("resize", () => {
@@ -60,4 +76,4 @@ window.addEventListener("resize", () => {
 });
 
 init();
-mainloop();
+animate();
